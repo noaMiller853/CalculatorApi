@@ -1,0 +1,114 @@
+openapi: 3.0.0
+info:
+  title: Calculator API
+  description: REST API for performing arithmetic operations using JWT and custom headers
+  version: 1.0.0
+servers:
+  - url: https://virtserver.swaggerhub.com/noamiller-8e1/CalculatorApi1/1.0.0
+    description: SwaggerHub API Auto Mocking
+  - url: http://localhost:5000/api/v1
+
+paths:
+  /calculator:
+    post:
+      tags:
+        - Calculator
+      summary: Performs a calculation on two numbers
+      operationId: calculate
+      parameters:
+        - name: X-Operation
+          in: header
+          description: The arithmetic operation to perform
+          required: true
+          schema:
+            type: string
+            enum:
+              - add
+              - subtract
+              - multiply
+              - divide
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CalculationRequest"
+            example:
+              firstNumber: 10
+              secondNumber: 5
+      responses:
+        "200":
+          description: Calculation result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CalculationResponse"
+              example:
+                result: 15
+                operation: add
+                timestamp: "2025-04-08T14:00:00Z"
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "500":
+          description: Internal Server Error
+      security:
+        - bearerAuth: []
+
+  /auth/token:
+    post:
+      tags:
+        - Authentication
+      summary: Generates a JWT token for demo purposes
+      operationId: getToken
+      responses:
+        "200":
+          description: JWT token created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    description: JWT token string
+              example:
+                token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+        "500":
+          description: Server error
+
+components:
+  schemas:
+    CalculationRequest:
+      required:
+        - firstNumber
+        - secondNumber
+      type: object
+      properties:
+        firstNumber:
+          type: number
+          description: The first number to use in the calculation
+        secondNumber:
+          type: number
+          description: The second number to use in the calculation
+
+    CalculationResponse:
+      type: object
+      properties:
+        result:
+          type: number
+          description: The result of the arithmetic operation
+        operation:
+          type: string
+          description: The operation that was performed (e.g., add, subtract)
+        timestamp:
+          type: string
+          format: date-time
+          description: The time at which the calculation was performed
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

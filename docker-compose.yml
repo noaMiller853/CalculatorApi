@@ -1,0 +1,14 @@
+services:
+  calculator-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "5000:8080"  
+    environment:
+      - JwtSettings__Secret=super-secret-key-here-1234567890
+      - JwtSettings__ExpirationMinutes=60
+      - JwtSettings__Issuer=CalculatorApi
+      - JwtSettings__Audience=CalculatorUsers
+      
+   
